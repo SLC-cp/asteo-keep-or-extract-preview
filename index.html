@@ -67,9 +67,9 @@ h1{margin:0;font-family:var(--f-head);font-weight:600;font-size:clamp(16px,2.2vw
 <script>
 // 各端末のカンプ（デザインツールの都合で分割されたファイルを上から順につなげて表示）
 const VIEWS={
-  pc:{w:1440,parts:[["comps/pc-1.html",5760],["comps/pc-2.html",4070]]},
-  tablet:{w:768,parts:[["comps/tablet-1.html",6400],["comps/tablet-2.html",6620]]},
-  sp:{w:390,parts:[["comps/sp-1.html",5380],["comps/sp-2.html",5460],["comps/sp-3.html",5180]]}
+  pc:{w:1440,parts:[["comps/pc-1.html",5760],["comps/pc-2.html",4131]]},
+  tablet:{w:768,parts:[["comps/tablet-1.html",6340],["comps/tablet-2.html",6610]]},
+  sp:{w:390,parts:[["comps/sp-1.html",5325],["comps/sp-2.html",5396],["comps/sp-3.html",5167]]}
 };
 const stage=document.getElementById('stage'),note=document.getElementById('note');
 let cur=null;
@@ -87,8 +87,10 @@ function show(key){
   document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===key));
   stage.innerHTML='';
   VIEWS[key].parts.forEach(([src,h],i)=>{
-    const d=document.createElement('div');d.className='part';d.dataset.h=h;
+    const d=document.createElement('div'),d0=d;d.className='part';d.dataset.h=h;
     const f=document.createElement('iframe');f.src=src;f.title=key+' '+(i+1);f.setAttribute('scrolling','no');if(i>0)f.loading='lazy';
+    // 読み込み後、カンプの実際の高さに合わせる（下端の切れ防止）
+    f.addEventListener('load',()=>{try{const d=f.contentDocument;const upd=()=>{const h=Math.max(d.documentElement.scrollHeight,d.body.scrollHeight);if(h&&Math.abs(h-d0.dataset.h)>1){d0.dataset.h=h;fit()}};upd();d.fonts&&d.fonts.ready.then(upd);setTimeout(upd,1500)}catch(e){}});
     d.appendChild(f);stage.appendChild(d);
   });
   fit();
