@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>*{box-sizing:border-box}body{margin:0}</style>
+<title>歯を抜く前のご相談 デザインカンプ</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;600&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* レイアウト：上部に固定の切替バー、その下にカンプを実寸比で縮小表示（分割ファイルは縦に連結） */
+:root{
+  --bg:#eef1f5; --panel:#ffffff; --fg:#14243a; --muted:#5a6880;
+  --navy:#071b3a; --gold:#b08d4a; --line:#d3dae4; --tab-on:#071b3a; --tab-on-fg:#ffffff;
+  --shadow:rgba(7,27,58,.12);
+  --f-head:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1524; --panel:#14213a; --fg:#e6ebf3; --muted:#a3afc2; --navy:#e6ebf3; --gold:#d2b071;
+  --line:#2a3a55; --tab-on:#d2b071; --tab-on-fg:#0c1524; --shadow:rgba(0,0,0,.4); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1524; --panel:#14213a; --fg:#e6ebf3; --muted:#a3afc2; --navy:#e6ebf3; --gold:#d2b071;
+  --line:#2a3a55; --tab-on:#d2b071; --tab-on-fg:#0c1524; --shadow:rgba(0,0,0,.4); color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);line-height:1.7}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1480px;margin:0 auto;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
+.ttl{min-width:0;flex:1 1 300px}
+.eyebrow{font-size:11px;letter-spacing:.12em;color:var(--gold);font-weight:700}
+h1{margin:0;font-family:var(--f-head);font-weight:600;font-size:clamp(16px,2.2vw,20px);color:var(--navy);text-wrap:balance;line-height:1.4}
+.tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:8px}
+.tabs button{appearance:none;border:0;background:transparent;color:var(--fg);font:inherit;font-size:14px;font-weight:500;padding:8px 14px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.tabs button small{color:var(--muted);font-size:11px;margin-left:4px}
+.tabs button[aria-selected="true"]{background:var(--tab-on);color:var(--tab-on-fg)}
+.tabs button[aria-selected="true"] small{color:inherit;opacity:.75}
+.tabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1480px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.note{margin:0 auto 16px;font-size:13px;color:var(--muted);text-align:center;text-wrap:balance}
+.stage{margin:0 auto;background:#fff;box-shadow:0 6px 30px var(--shadow);max-width:100%}
+.part{position:relative;overflow:hidden}
+.part iframe{position:absolute;top:0;left:0;border:0;transform-origin:0 0;display:block;background:#fff}
+@media (prefers-reduced-motion:no-preference){.stage{transition:opacity .2s}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="ttl">
+      <div class="eyebrow">DESIGN COMP ／ 確認用</div>
+      <h1>神戸三宮アステオ歯科「歯を抜く前のご相談」リデザイン案</h1>
+    </div>
+    <div class="tabs" role="tablist" aria-label="表示する端末">
+      <button role="tab" id="t-pc" data-v="pc">PC<small>1440px</small></button>
+      <button role="tab" id="t-tablet" data-v="tablet">タブレット<small>768px</small></button>
+      <button role="tab" id="t-sp" data-v="sp">スマホ<small>390px</small></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="note" id="note"></p>
+  <div class="stage" id="stage"></div>
+</main>
+
+<script>
+// 各端末のカンプ（デザインツールの都合で分割されたファイルを上から順につなげて表示）
+const VIEWS={
+  pc:{w:1440,parts:[["comps/pc-1.html",5760],["comps/pc-2.html",4070]]},
+  tablet:{w:768,parts:[["comps/tablet-1.html",6400],["comps/tablet-2.html",6620]]},
+  sp:{w:390,parts:[["comps/sp-1.html",5380],["comps/sp-2.html",5460],["comps/sp-3.html",5180]]}
+};
+const stage=document.getElementById('stage'),note=document.getElementById('note');
+let cur=null;
+function fit(){
+  if(!cur)return;
+  const v=VIEWS[cur];const avail=stage.parentElement.clientWidth-parseFloat(getComputedStyle(stage.parentElement).paddingLeft)-parseFloat(getComputedStyle(stage.parentElement).paddingRight);
+  const s=Math.min(1,avail/v.w);
+  stage.style.width=(v.w*s)+'px';
+  stage.querySelectorAll('.part').forEach(p=>{const h=+p.dataset.h;p.style.height=(h*s)+'px';const f=p.firstElementChild;f.style.width=v.w+'px';f.style.height=h+'px';f.style.transform='scale('+s+')'});
+  note.textContent=s<1?'画面幅に合わせて縮小表示しています（実寸の約'+Math.round(s*100)+'%）。':'実寸で表示しています。';
+}
+function show(key){
+  if(!VIEWS[key])key='pc';
+  cur=key;
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===key));
+  stage.innerHTML='';
+  VIEWS[key].parts.forEach(([src,h],i)=>{
+    const d=document.createElement('div');d.className='part';d.dataset.h=h;
+    const f=document.createElement('iframe');f.src=src;f.title=key+' '+(i+1);f.setAttribute('scrolling','no');if(i>0)f.loading='lazy';
+    d.appendChild(f);stage.appendChild(d);
+  });
+  fit();
+}
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{if(location.hash!=='#'+b.dataset.v)location.hash=b.dataset.v;else show(b.dataset.v);window.scrollTo(0,0)}));
+addEventListener('hashchange',()=>show(location.hash.slice(1)));
+addEventListener('resize',fit);
+show(location.hash.slice(1));
+</script>
+</body>
+</html>
